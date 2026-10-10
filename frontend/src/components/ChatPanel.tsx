@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import Markdown from 'react-markdown'
-import { API_URL, backendHint, sendChat } from '../api'
+import { API_URL, backendHint, FRONTEND_ONLY, sendChat } from '../api'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -39,7 +39,7 @@ export function ChatPanel() {
     } catch {
       setMessages((m) => [
         ...m,
-        { role: 'assistant', text: `Couldn't reach the backend at ${API_URL}. ${backendHint()}`, error: true },
+        { role: 'assistant', text: FRONTEND_ONLY ? 'Something went wrong searching the course list. Try refreshing.' : `Couldn't reach the backend at ${API_URL}. ${backendHint()}`, error: true },
       ])
     } finally {
       setThinking(false)
@@ -64,7 +64,7 @@ export function ChatPanel() {
       <header className="chat-header">
         <div>
           <strong>Course Assistant</strong>
-          <span>Searches the SOM course list &amp; the web</span>
+          <span>{FRONTEND_ONLY ? 'Searches the SOM course list in your browser' : 'Searches the SOM course list & the web'}</span>
         </div>
         <button onClick={() => setOpen(false)} aria-label="Close chat">×</button>
       </header>

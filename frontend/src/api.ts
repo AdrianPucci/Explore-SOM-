@@ -1,19 +1,18 @@
-// Everything the React app needs to talk to the FastAPI backend.
+// Everything the React app needs to get courses and chat answers.
+//
+// Two modes:
+// - Backend mode: talk to the FastAPI + PydanticAI backend (real AI agent with web search).
+//   Used when VITE_API_URL is set, or when running locally (backend on 127.0.0.1:8000).
+// - Front-end-only mode: the deployed static site with no backend. Courses come from
+//   public/yale_som_classes.json and the chat is answered in the browser by localAssistant.ts.
 
-// On Render, set VITE_API_URL to the backend's URL (it is baked in at build time, so redeploy after changing it).
-export const API_URL = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000').replace(/\/+$/, '')
+import { answerLocally } from './localAssistant'
 
-const IS_LOCAL_API = /^https?:\/\/(127\.0\.0\.1|localhost)(:|\/|$)/.test(API_URL)
 const IS_LOCAL_PAGE = ['127.0.0.1', 'localhost'].includes(window.location.hostname)
+const CONFIGURED_API = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '')
 
-/** What to check when the backend can't be reached, depending on where the page is running. */
-export function backendHint(): string {
-  if (IS_LOCAL_API && !IS_LOCAL_PAGE) {
-    return 'This site was built without VITE_API_URL. In Render, set VITE_API_URL to your backend URL and redeploy the static site.'
-  }
-  if (IS_LOCAL_API) return 'Is `uvicorn main:app --port 8000` running in backend/?'
-  return 'The backend may be waking up (free Render services sleep) — wait a minute and refresh.'
-}
+export const API_URL = CONFIGURED_API || (IS_LOCAL_PAGE ? 'http://127.0.0.1:8000' : '')
+export const FRONTEND_ONLY = !API_URL
 
 /** One row of yale_som_classes.json, exactly as /api/courses returns it. */
 export interface CourseRow {
@@ -39,7 +38,24 @@ export interface ChatReply {
   tools_used: string[]
 }
 
+let bundledCourses: Promise<CourseRow[]> | null = null
+
+/** The course file shipped with the site (front-end-only mode). Loaded once. */
+function loadBundledCourses(): Promise<CourseRow[]> {
+  bundledCourses ??= fetch(`${import.meta.env.BASE_URL}yale_som_classes.json`).then((res) => {
+    if (!res.ok) throw new Error(`Course file failed (${res.status})`)
+    return res.json()
+  })
+  return bundledCourses
+}
+
 export async function fetchCourses(q: string, signal?: AbortSignal): Promise<CourseRow[]> {
+  if (FRONTEND_ONLY) {
+    // Same filter as the backend's /api/courses: the text appears anywhere in the row.
+    const courses = await loadBundledCourses()
+    const needle = q.trim().toLowerCase()
+    return needle ? courses.filter((c) => JSON.stringify(c).toLowerCase().includes(needle)) : courses
+  }
   const url = new URL('/api/courses', API_URL)
   if (q.trim()) url.searchParams.set('q', q.trim())
   const res = await fetch(url, { signal })
@@ -49,6 +65,7 @@ export async function fetchCourses(q: string, signal?: AbortSignal): Promise<Cou
 }
 
 export async function sendChat(message: string): Promise<ChatReply> {
+  if (FRONTEND_ONLY) return answerLocally(message, await loadBundledCourses())
   const res = await fetch(new URL('/api/chat', API_URL), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -56,6 +73,12 @@ export async function sendChat(message: string): Promise<ChatReply> {
   })
   if (!res.ok) throw new Error(`Chat failed (${res.status})`)
   return res.json()
+}
+
+/** What to check when the backend can't be reached. */
+export function backendHint(): string {
+  if (IS_LOCAL_PAGE && !CONFIGURED_API) return 'Is `uvicorn main:app --port 8000` running in backend/?'
+  return 'The backend may be waking up (free Render services sleep) — wait a minute and refresh.'
 }
 
 /** "Zaman, Tauhid" -> "Tauhid Zaman" */
