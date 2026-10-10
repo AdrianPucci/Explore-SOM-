@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { fetchCourses, type CourseRow } from './api'
+import { API_URL as API_URL_LABEL, backendHint, fetchCourses, type CourseRow } from './api'
 import { ChatPanel } from './components/ChatPanel'
 import { CourseCard, CourseDetail, groupCourses, type CourseGroup } from './components/CourseCard'
 
@@ -28,7 +28,7 @@ export default function App() {
       setLoading(true)
       fetchCourses(query, controller.signal)
         .then((data) => { setRows(data); setError('') })
-        .catch((e) => { if (e.name !== 'AbortError') setError('Could not load courses — is the backend running on port 8000?') })
+        .catch((e) => { if (e.name !== 'AbortError') setError(`Could not load courses from ${API_URL_LABEL}. ${backendHint()}`) })
         .finally(() => setLoading(false))
     }, 250)
     return () => { clearTimeout(timer); controller.abort() }

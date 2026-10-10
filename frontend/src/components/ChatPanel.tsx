@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import Markdown from 'react-markdown'
-import { sendChat } from '../api'
+import { API_URL, backendHint, sendChat } from '../api'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -39,7 +39,7 @@ export function ChatPanel() {
     } catch {
       setMessages((m) => [
         ...m,
-        { role: 'assistant', text: "Couldn't reach the backend. Is `uvicorn main:app --port 8000` running?", error: true },
+        { role: 'assistant', text: `Couldn't reach the backend at ${API_URL}. ${backendHint()}`, error: true },
       ])
     } finally {
       setThinking(false)

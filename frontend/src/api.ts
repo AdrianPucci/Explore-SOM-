@@ -1,6 +1,19 @@
 // Everything the React app needs to talk to the FastAPI backend.
 
-export const API_URL = import.meta.env.VITE_API_URL ?? 'http://127.0.0.1:8000'
+// On Render, set VITE_API_URL to the backend's URL (it is baked in at build time, so redeploy after changing it).
+export const API_URL = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000').replace(/\/+$/, '')
+
+const IS_LOCAL_API = /^https?:\/\/(127\.0\.0\.1|localhost)(:|\/|$)/.test(API_URL)
+const IS_LOCAL_PAGE = ['127.0.0.1', 'localhost'].includes(window.location.hostname)
+
+/** What to check when the backend can't be reached, depending on where the page is running. */
+export function backendHint(): string {
+  if (IS_LOCAL_API && !IS_LOCAL_PAGE) {
+    return 'This site was built without VITE_API_URL. In Render, set VITE_API_URL to your backend URL and redeploy the static site.'
+  }
+  if (IS_LOCAL_API) return 'Is `uvicorn main:app --port 8000` running in backend/?'
+  return 'The backend may be waking up (free Render services sleep) — wait a minute and refresh.'
+}
 
 /** One row of yale_som_classes.json, exactly as /api/courses returns it. */
 export interface CourseRow {
