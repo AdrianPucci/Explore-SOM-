@@ -1,0 +1,138 @@
+:root {
+  --yale: #00356b;
+  --yale-dark: #00254c;
+  --yale-light: #286dc0;
+  --accent: #63aaff;
+  --bg: #f4f6fa;
+  --card: #ffffff;
+  --text: #1c2533;
+  --muted: #5d6b80;
+  --border: #dde3ec;
+  --radius: 14px;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; background: var(--bg); }
+button { font: inherit; cursor: pointer; }
+input, select { font: inherit; }
+
+/* ---------- Hero + search ---------- */
+.hero {
+  background: radial-gradient(1200px 400px at 80% -20%, #1a5aa8 0%, transparent 60%), linear-gradient(135deg, var(--yale) 0%, var(--yale-dark) 100%);
+  color: white;
+  padding: 56px 24px 72px;
+}
+.hero-inner { max-width: 1120px; margin: 0 auto; }
+.eyebrow { text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.78rem; font-weight: 600; opacity: 0.75; margin: 0 0 8px; }
+.hero h1 { font-family: 'Georgia', 'Times New Roman', serif; font-size: clamp(2.2rem, 5vw, 3.4rem); margin: 0 0 12px; font-weight: 600; }
+.hero-sub { max-width: 620px; opacity: 0.85; line-height: 1.55; margin: 0 0 28px; }
+.search {
+  display: flex; align-items: center; gap: 10px;
+  max-width: 640px; background: white; border-radius: 999px; padding: 6px 8px 6px 20px;
+  box-shadow: 0 12px 32px rgba(0, 20, 50, 0.35);
+}
+.search input { flex: 1; border: none; outline: none; padding: 10px 0; font-size: 1rem; color: var(--text); background: transparent; }
+.search button { border: none; background: #eef2f8; color: var(--muted); width: 32px; height: 32px; border-radius: 50%; font-size: 1.1rem; }
+
+/* ---------- Filters ---------- */
+.content { max-width: 1120px; margin: -32px auto 0; padding: 0 24px 120px; }
+.filters {
+  display: flex; gap: 12px; align-items: flex-start; justify-content: space-between;
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px; box-shadow: 0 4px 16px rgba(0, 30, 70, 0.06);
+}
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 1px solid var(--border); background: white; color: var(--muted); padding: 6px 12px; border-radius: 999px; font-size: 0.85rem; transition: all 0.15s; }
+.chip:hover { border-color: var(--yale-light); color: var(--yale); }
+.chip.active { background: var(--yale); border-color: var(--yale); color: white; }
+.chip.more { border-style: dashed; color: var(--yale-light); }
+.filters select { border: 1px solid var(--border); border-radius: 10px; padding: 7px 10px; color: var(--text); background: white; flex-shrink: 0; }
+.result-count { color: var(--muted); font-size: 0.9rem; margin: 20px 4px 12px; }
+.error-banner { background: #fdecec; color: #9b1c1c; border-radius: 10px; padding: 12px 16px; }
+.empty { text-align: center; color: var(--muted); padding: 40px; }
+
+/* ---------- Course cards ---------- */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+.card {
+  display: flex; flex-direction: column; text-align: left; gap: 8px;
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 18px; color: var(--text); transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  border-top: 4px solid var(--yale);
+}
+.card:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(0, 40, 90, 0.12); border-color: var(--yale-light); border-top-color: var(--yale-light); }
+.card-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.course-number { font-weight: 700; color: var(--yale); font-size: 0.85rem; letter-spacing: 0.02em; }
+.tag { background: #e8f0fb; color: var(--yale); font-size: 0.72rem; font-weight: 600; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+.tag.light { background: #f0f2f6; color: var(--muted); }
+.card-title { font-family: 'Georgia', serif; font-size: 1.08rem; line-height: 1.3; margin: 2px 0 0; font-weight: 600; }
+.card-faculty { color: var(--muted); font-size: 0.88rem; margin: 0; }
+.card-meta { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.82rem; color: var(--text); margin-top: auto; padding-top: 6px; }
+.sections { color: var(--yale-light); font-weight: 600; }
+.card-foot { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--muted); border-top: 1px solid var(--border); padding-top: 10px; }
+
+/* ---------- Course detail modal ---------- */
+.modal-backdrop { position: fixed; inset: 0; background: rgba(5, 20, 45, 0.55); display: grid; place-items: center; padding: 20px; z-index: 40; }
+.modal { position: relative; background: white; border-radius: 18px; max-width: 720px; width: 100%; max-height: 88vh; overflow: auto; padding: 32px; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3); }
+.modal h2 { font-family: 'Georgia', serif; margin: 6px 0 12px; color: var(--yale-dark); }
+.modal h4 { margin: 24px 0 8px; color: var(--yale); }
+.modal-close { position: absolute; top: 14px; right: 16px; border: none; background: #f0f2f6; width: 34px; height: 34px; border-radius: 50%; font-size: 1.3rem; color: var(--muted); }
+.modal-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.description, .bio { line-height: 1.6; white-space: pre-line; color: #2c3748; }
+.bio { font-size: 0.92rem; color: var(--muted); }
+.sections-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.sections-table th { text-align: left; color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--border); padding: 6px 8px; }
+.sections-table td { padding: 8px; border-bottom: 1px solid #f0f2f6; }
+
+/* ---------- Chat ---------- */
+.chat-fab {
+  position: fixed; right: 24px; bottom: 24px; z-index: 30;
+  background: var(--yale); color: white; border: none; border-radius: 999px; padding: 14px 22px; font-weight: 600;
+  box-shadow: 0 12px 30px rgba(0, 53, 107, 0.4); transition: transform 0.15s;
+}
+.chat-fab:hover { transform: translateY(-2px); background: var(--yale-light); }
+.chat-panel {
+  position: fixed; right: 24px; bottom: 24px; z-index: 30;
+  width: min(420px, calc(100vw - 32px)); height: min(640px, calc(100vh - 48px));
+  background: white; border-radius: 18px; display: flex; flex-direction: column; overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0, 25, 60, 0.3); border: 1px solid var(--border);
+}
+.chat-header { display: flex; justify-content: space-between; align-items: center; background: var(--yale); color: white; padding: 14px 16px; }
+.chat-header div { display: flex; flex-direction: column; }
+.chat-header span { font-size: 0.78rem; opacity: 0.75; }
+.chat-header button { background: rgba(255, 255, 255, 0.15); border: none; color: white; width: 30px; height: 30px; border-radius: 50%; font-size: 1.2rem; }
+.chat-body { flex: 1; overflow-y: auto; padding: 16px; background: #f7f9fc; display: flex; flex-direction: column; gap: 12px; }
+.chat-empty { text-align: center; color: var(--muted); display: flex; flex-direction: column; gap: 8px; margin-top: 20px; }
+.suggestion { border: 1px solid var(--border); background: white; color: var(--yale); border-radius: 12px; padding: 10px 14px; text-align: left; }
+.suggestion:hover { border-color: var(--yale-light); }
+.bubble-row { display: flex; flex-direction: column; }
+.bubble-row.user { align-items: flex-end; }
+.bubble-row.assistant { align-items: flex-start; }
+.bubble { max-width: 88%; padding: 10px 14px; border-radius: 16px; line-height: 1.5; font-size: 0.92rem; overflow-wrap: anywhere; }
+.bubble.user { background: var(--yale); color: white; border-bottom-right-radius: 4px; }
+.bubble.assistant { background: white; border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+.bubble.error { background: #fdecec; border-color: #f5c2c2; color: #9b1c1c; }
+.bubble p { margin: 0 0 8px; }
+.bubble p:last-child { margin-bottom: 0; }
+.bubble ul, .bubble ol { margin: 4px 0 8px; padding-left: 20px; }
+.bubble li { margin-bottom: 6px; }
+.bubble a { color: var(--yale-light); }
+.tools-used { font-size: 0.74rem; color: var(--muted); margin: 6px 4px 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.tool-chip { background: #e8f0fb; color: var(--yale); padding: 2px 8px; border-radius: 999px; font-family: ui-monospace, Consolas, monospace; }
+.thinking { display: flex; align-items: center; gap: 10px; color: var(--muted); }
+.spinner { width: 16px; height: 16px; border: 2px solid #d3ddeb; border-top-color: var(--yale); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.chat-input { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--border); background: white; }
+.chat-input input { flex: 1; border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; outline: none; }
+.chat-input input:focus { border-color: var(--yale-light); }
+.chat-input button { background: var(--yale); color: white; border: none; border-radius: 12px; padding: 0 16px; font-weight: 600; }
+.chat-input button:disabled { opacity: 0.5; cursor: default; }
+
+@media (max-width: 640px) {
+  .filters { flex-direction: column; }
+  .chat-panel { right: 16px; bottom: 16px; }
+  .modal { padding: 24px 18px; }
+}

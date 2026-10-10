@@ -1,0 +1,17 @@
+# secrets
+.env
+.env.*
+!.env.example
+# Python
+.venv/
+__pycache__/
+*.pyc
+# Node / React
+node_modules/
+dist/
+.vite/
+# agent run logs (created at runtime)
+output/
+# course materials, not part of the app
+lec07-*
+folder_joke.txt
